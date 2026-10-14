@@ -3,116 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Control de Avales</title>
-    <!-- Bootstrap CSS -->
+    <title>Sistema de Control de Avales - UNA / DTIC</title>
+    <!-- Bootstrap CSS e Íconos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Estilos Personalizados -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="container my-5">
-    <h2 class="main-title text-center">Control de Avales de Software</h2>
+<div class="container my-4">
 
-    <!-- Formulario de Registro / Edición -->
-    <div class="card mb-4">
-        <div class="card-header header-primary">
-            <h5 id="formTitle">Registrar Nuevo Aval</h5>
-            <button class="btn btn-sm btn-light d-none" id="btnCancelarEdit" onclick="limpiarFormulario()">Cancelar Edición</button>
+    <!-- Header Institucional -->
+    <div class="header-container d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <img src="img/logo_una.png" alt="Logo Universidad Nacional" class="logo-header">
         </div>
-        <div class="card-body">
-            <form id="avalForm" class="row g-3">
-                <input type="hidden" id="avalId">
-
-                <div class="col-md-3">
-                    <label class="form-label">Fecha</label>
-                    <input type="date" class="form-control" id="fecha" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Software</label>
-                    <select class="form-select" id="nombreSoftware" required>
-                        <option value="">Seleccione...</option>
-                        <option value="IntelliJ IDEA">IntelliJ IDEA</option>
-                        <option value="Oracle DB">Oracle DB</option>
-                        <option value="Microsoft Visual Studio">Microsoft Visual Studio</option>
-                        <option value="Docker Desktop">Docker Desktop</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Versión</label>
-                    <input type="text" class="form-control" id="version" placeholder="Ej. 2026.1">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Idioma</label>
-                    <select class="form-select" id="idioma">
-                        <option value="Español">Español</option>
-                        <option value="Inglés">Inglés</option>
-                        <option value="Multilenguaje">Multilenguaje</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">Instancia Solicitante</label>
-                    <select class="form-select" id="instanciaSolicitante">
-                        <option value="Departamento de TI">Departamento de TI</option>
-                        <option value="Dirección General">Dirección General</option>
-                        <option value="Gestión Académica">Gestión Académica</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Oficio</label>
-                    <input type="text" class="form-control" id="oficio" placeholder="OF-2026-X">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Tiquete</label>
-                    <input type="text" class="form-control" id="tiquete" placeholder="TK-000">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Renovación</label>
-                    <select class="form-select" id="requiereRenovacion">
-                        <option value="true">Sí</option>
-                        <option value="false">No</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">Cantidad</label>
-                    <input type="number" class="form-control" id="cantidad" min="1" value="1" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Moneda</label>
-                    <select class="form-select" id="moneda">
-                        <option value="USD">USD ($)</option>
-                        <option value="CRC">CRC (₡)</option>
-                        <option value="EUR">EUR (€)</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Precio Unitario</label>
-                    <input type="number" step="0.01" class="form-control" id="precioUnitario" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Costo Total (Auto)</label>
-                    <input type="text" class="form-control" id="costoTotal" readonly placeholder="Calculado al guardar">
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label">Observaciones Adicionales</label>
-                    <textarea class="form-control" id="observacionesAdicionales" rows="2"></textarea>
-                </div>
-
-                <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-success" id="btnGuardar">Guardar Aval</button>
-                </div>
-            </form>
+        <div class="text-center flex-grow-1">
+            <h3 class="header-title-text">UNIVERSIDAD NACIONAL</h3>
+            <p class="header-subtitle-text">Dirección de Tecnologías de la Información y Comunicación (DTIC)</p>
+        </div>
+        <div>
+            <img src="img/logo_DTIC.png" alt="Logo DTIC" class="logo-header">
         </div>
     </div>
 
-    <!-- Panel de Filtros Multicriterio -->
+    <!-- Módulo KPI Resumen -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card kpi-card p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="kpi-title">Total de Avales</div>
+                        <div class="kpi-value" id="kpiTotalAvales">0</div>
+                    </div>
+                    <i class="bi bi-file-earmark-check fs-1" style="color: var(--dtic-navy);"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card p-3" style="border-left-color: #10B981;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="kpi-title">Inversión (USD)</div>
+                        <div class="kpi-value text-success" id="kpiCostoUSD">$0.00</div>
+                    </div>
+                    <i class="bi bi-currency-dollar text-success fs-1"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card p-3" style="border-left-color: #F59E0B;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="kpi-title">Inversión (CRC)</div>
+                        <div class="kpi-value text-warning" id="kpiCostoCRC">₡0</div>
+                    </div>
+                    <i class="bi bi-cash-stack text-warning fs-1"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card p-3" style="border-left-color: var(--dtic-red);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="kpi-title">Requieren Renovación</div>
+                        <div class="kpi-value fs-2" style="color: var(--dtic-red);" id="kpiRenovaciones">0</div>
+                    </div>
+                    <i class="bi bi-arrow-repeat fs-1" style="color: var(--dtic-red);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Búsqueda y Gestión -->
     <div class="card mb-4">
         <div class="card-header header-filter">
-            <h6 id="filterTitle">Filtros de Búsqueda Avanzada</h6>
-            <button class="btn btn-sm btn-outline-light" onclick="limpiarFiltros()">Limpiar Filtros</button>
+            <h6 class="mb-0"><i class="bi bi-funnel me-1"></i> Filtros de Búsqueda y Gestión</h6>
+            <div>
+                <button class="btn btn-sm btn-outline-light me-2" onclick="limpiarFiltros()"><i class="bi bi-x-circle me-1"></i> Limpiar Filtros</button>
+                <button class="btn btn-sm btn-nuevo-aval" onclick="abrirModalCrear()"><i class="bi bi-plus-lg me-1"></i> Nuevo Aval</button>
+            </div>
         </div>
         <div class="card-body">
             <div class="row g-3">
@@ -120,10 +91,10 @@
                     <label class="form-label">Software</label>
                     <select class="form-select form-select-sm" id="filterSoftware" onchange="filtrarTabla()">
                         <option value="">Todos los softwares</option>
-                        <option value="IntelliJ IDEA">IntelliJ IDEA</option>
-                        <option value="Oracle DB">Oracle DB</option>
-                        <option value="Microsoft Visual Studio">Microsoft Visual Studio</option>
-                        <option value="Docker Desktop">Docker Desktop</option>
+                        <option value="IntelliJ IDEA Ultimate Edition">IntelliJ IDEA</option>
+                        <option value="Oracle Database Enterprise Edition">Oracle DB</option>
+                        <option value="Microsoft Visual Studio Professional">Microsoft Visual Studio</option>
+                        <option value="Docker Desktop Business">Docker Desktop</option>
                     </select>
                 </div>
 
@@ -134,6 +105,7 @@
                         <option value="Departamento de TI">Departamento de TI</option>
                         <option value="Dirección General">Dirección General</option>
                         <option value="Gestión Académica">Gestión Académica</option>
+                        <option value="Vicerrectoría de Docencia">Vicerrectoría de Docencia</option>
                     </select>
                 </div>
 
@@ -150,7 +122,7 @@
                 </div>
 
                 <div class="col-md-2 d-flex align-items-end justify-content-end">
-                    <span class="badge-total" id="totalRegistros">Registros: 0</span>
+                    <span class="badge bg-secondary fs-6" id="totalRegistros">Registros: 0</span>
                 </div>
 
                 <div class="col-md-6">
@@ -166,12 +138,12 @@
         </div>
     </div>
 
-    <!-- Tabla de Registros -->
+    <!-- Tabla Principal de Avales -->
     <div class="card">
         <div class="card-header header-dark">
-            <h5>Lista de Avales Registrados</h5>
+            <h5 class="mb-0"><i class="bi bi-table me-2"></i> Lista de Avales Registrados</h5>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive p-0">
             <table class="table table-hover align-middle">
                 <thead>
                 <tr>
@@ -181,46 +153,174 @@
                     <th>Instancia</th>
                     <th>Oficio</th>
                     <th>Tiquete</th>
+                    <th>Renovación</th>
                     <th>Cant.</th>
-                    <th>Precio U.</th>
                     <th>Total</th>
                     <th class="text-center">Acciones</th>
                 </tr>
                 </thead>
                 <tbody id="tablaAvales">
-                <!-- Registros dinámicos -->
+                <!-- Filas dinámicas -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
+<!-- MODAL EMERGENTE: Formulario de Registro / Edición -->
+<div class="modal fade" id="avalModal" tabindex="-1" aria-labelledby="avalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center position-relative">
+                <h5 class="modal-title fw-bold text-center w-100" id="avalModalLabel">Registrar Nuevo Aval</h5>
+                <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="avalForm" class="row g-3">
+                    <input type="hidden" id="avalId">
+
+                    <!-- Fila 1 -->
+                    <div class="col-md-9">
+                        <label class="form-label">Nombre de Software</label>
+                        <select class="form-select" id="nombreSoftware" required>
+                            <option value="">Seleccione el software...</option>
+                            <option value="IntelliJ IDEA Ultimate Edition">IntelliJ IDEA Ultimate Edition</option>
+                            <option value="Oracle Database Enterprise Edition">Oracle Database Enterprise Edition</option>
+                            <option value="Microsoft Visual Studio Professional">Microsoft Visual Studio Professional</option>
+                            <option value="Docker Desktop Business">Docker Desktop Business</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="fecha" required>
+                    </div>
+
+                    <!-- Fila 2 -->
+                    <div class="col-md-9">
+                        <label class="form-label">Instancia Solicitante</label>
+                        <select class="form-select" id="instanciaSolicitante">
+                            <option value="Departamento de TI">Departamento de TI</option>
+                            <option value="Dirección General">Dirección General</option>
+                            <option value="Gestión Académica">Gestión Académica</option>
+                            <option value="Vicerrectoría de Docencia">Vicerrectoría de Docencia</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Versión</label>
+                        <input type="text" class="form-control" id="version" placeholder="Ej. 2026.1">
+                    </div>
+
+                    <!-- Fila 3 -->
+                    <div class="col-md-3">
+                        <label class="form-label">Idioma</label>
+                        <select class="form-select" id="idioma">
+                            <option value="Español">Español</option>
+                            <option value="Inglés">Inglés</option>
+                            <option value="Multilenguaje">Multilenguaje</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Oficio</label>
+                        <input type="text" class="form-control" id="oficio" placeholder="OF-2026-X">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tiquete</label>
+                        <input type="text" class="form-control" id="tiquete" placeholder="TK-000">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Renovación</label>
+                        <select class="form-select" id="requiereRenovacion">
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+
+                    <!-- Fila 4 -->
+                    <div class="col-md-3">
+                        <label class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidad" min="1" value="1" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Moneda</label>
+                        <select class="form-select" id="moneda">
+                            <option value="USD">USD ($)</option>
+                            <option value="CRC">CRC (₡)</option>
+                            <option value="EUR">EUR (€)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Precio Unitario</label>
+                        <input type="number" step="0.01" class="form-control" id="precioUnitario" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Costo Total (Auto)</label>
+                        <input type="text" class="form-control" id="costoTotal" readonly placeholder="Auto-calculado">
+                    </div>
+
+                    <!-- Fila 5 -->
+                    <div class="col-12">
+                        <label class="form-label">Observaciones Adicionales</label>
+                        <textarea class="form-control" id="observacionesAdicionales" rows="2"></textarea>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="col-12 text-end pt-3">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-navy" id="btnGuardar">Guardar Aval</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS de Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     const API_URL = '/api/avales';
     let listaAvalesGlobal = [];
+    let bsModalInstance = null;
 
-    document.addEventListener('DOMContentLoaded', cargarAvales);
+    document.addEventListener('DOMContentLoaded', () => {
+        bsModalInstance = new bootstrap.Modal(document.getElementById('avalModal'));
+        cargarAvales();
+    });
 
     async function cargarAvales() {
         const res = await fetch(API_URL);
         listaAvalesGlobal = await res.json();
         poblarAñosDisponibles();
+        calcularMetricasKPI(listaAvalesGlobal);
         filtrarTabla();
+    }
+
+    function calcularMetricasKPI(avales) {
+        document.getElementById('kpiTotalAvales').textContent = avales.length;
+
+        let totalUSD = 0;
+        let totalCRC = 0;
+        let renovaciones = 0;
+
+        avales.forEach(item => {
+            const costo = item.costoTotal || 0;
+            if (item.moneda === 'USD') totalUSD += costo;
+            if (item.moneda === 'CRC') totalCRC += costo;
+            if (item.requiereRenovacion) renovaciones++;
+        });
+
+        document.getElementById('kpiCostoUSD').textContent = `$${totalUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        document.getElementById('kpiCostoCRC').textContent = `₡${totalCRC.toLocaleString('es-CR', {minimumFractionDigits: 0})}`;
+        document.getElementById('kpiRenovaciones').textContent = renovaciones;
     }
 
     function poblarAñosDisponibles() {
         const selectAño = document.getElementById('filterAño');
         const añoActualVal = selectAño.value;
-        const años = new Set();
-
-        años.add("2025");
-        años.add("2026");
+        const años = new Set(["2025", "2026"]);
 
         listaAvalesGlobal.forEach(item => {
-            if (item.fecha) {
-                const año = item.fecha.split('-')[0];
-                años.add(año);
-            }
+            if (item.fecha) años.add(item.fecha.split('-')[0]);
         });
 
         selectAño.innerHTML = '<option value="">Todos</option>';
@@ -236,21 +336,30 @@
         tbody.innerHTML = '';
         document.getElementById('totalRegistros').textContent = `Registros: ${avales.length}`;
 
+        if (avales.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-muted"><i class="bi bi-inbox fs-3 d-block mb-1"></i>No se encontraron registros de avales</td></tr>`;
+            return;
+        }
+
         avales.forEach(item => {
+            const badgeRenovacion = item.requiereRenovacion
+                ? `<span class="badge-renovacion-si"><i class="bi bi-check-circle me-1"></i>Sí</span>`
+                : `<span class="badge-renovacion-no"><i class="bi bi-x-circle me-1"></i>No</span>`;
+
             tbody.innerHTML += `
                 <tr>
-                    <td>${item.id}</td>
-                    <td>${item.fecha || ''}</td>
-                    <td><strong>${item.nombreSoftware}</strong> ${item.version ? '(' + item.version + ')' : ''}</td>
-                    <td>${item.instanciaSolicitante || ''}</td>
-                    <td>${item.oficio || ''}</td>
-                    <td>${item.tiquete || ''}</td>
+                    <td><strong>#${item.id}</strong></td>
+                    <td>${item.fecha || '-'}</td>
+                    <td><strong>${item.nombreSoftware}</strong> ${item.version ? '<small class="text-muted">(' + item.version + ')</small>' : ''}</td>
+                    <td>${item.instanciaSolicitante || '-'}</td>
+                    <td><code>${item.oficio || '-'}</code></td>
+                    <td><code>${item.tiquete || '-'}</code></td>
+                    <td>${badgeRenovacion}</td>
                     <td>${item.cantidad || 0}</td>
-                    <td>${item.moneda} ${item.precioUnitario ? item.precioUnitario.toFixed(2) : '0.00'}</td>
                     <td><strong>${item.moneda} ${item.costoTotal ? item.costoTotal.toFixed(2) : '0.00'}</strong></td>
                     <td class="text-center">
-                        <button class="btn btn-sm btn-warning me-1" onclick="cargarEdicion(${item.id})">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="eliminarAval(${item.id})">Eliminar</button>
+                        <button class="btn btn-sm btn-outline-warning me-1" onclick="cargarEdicion(${item.id})" title="Editar"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarAval(${item.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             `;
@@ -297,6 +406,35 @@
         filtrarTabla();
     }
 
+    function abrirModalCrear() {
+        document.getElementById('avalId').value = '';
+        document.getElementById('avalForm').reset();
+        document.getElementById('avalModalLabel').textContent = 'Registrar Nuevo Aval';
+        bsModalInstance.show();
+    }
+
+    function cargarEdicion(id) {
+        const item = listaAvalesGlobal.find(a => a.id === id);
+        if (!item) return;
+
+        document.getElementById('avalId').value = item.id;
+        document.getElementById('fecha').value = item.fecha || '';
+        document.getElementById('nombreSoftware').value = item.nombreSoftware || '';
+        document.getElementById('version').value = item.version || '';
+        document.getElementById('idioma').value = item.idioma || 'Español';
+        document.getElementById('requiereRenovacion').value = item.requiereRenovacion ? 'true' : 'false';
+        document.getElementById('instanciaSolicitante').value = item.instanciaSolicitante || 'Departamento de TI';
+        document.getElementById('oficio').value = item.oficio || '';
+        document.getElementById('tiquete').value = item.tiquete || '';
+        document.getElementById('cantidad').value = item.cantidad || 1;
+        document.getElementById('moneda').value = item.moneda || 'USD';
+        document.getElementById('precioUnitario').value = item.precioUnitario || '';
+        document.getElementById('observacionesAdicionales').value = item.observacionesAdicionales || '';
+
+        document.getElementById('avalModalLabel').textContent = `Editando Aval #${item.id}`;
+        bsModalInstance.show();
+    }
+
     document.getElementById('avalForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -330,41 +468,9 @@
             });
         }
 
-        limpiarFormulario();
+        bsModalInstance.hide();
         cargarAvales();
     });
-
-    function cargarEdicion(id) {
-        const item = listaAvalesGlobal.find(a => a.id === id);
-        if (!item) return;
-
-        document.getElementById('avalId').value = item.id;
-        document.getElementById('fecha').value = item.fecha || '';
-        document.getElementById('nombreSoftware').value = item.nombreSoftware || '';
-        document.getElementById('version').value = item.version || '';
-        document.getElementById('idioma').value = item.idioma || 'Español';
-        document.getElementById('requiereRenovacion').value = item.requiereRenovacion ? 'true' : 'false';
-        document.getElementById('instanciaSolicitante').value = item.instanciaSolicitante || 'Departamento de TI';
-        document.getElementById('oficio').value = item.oficio || '';
-        document.getElementById('tiquete').value = item.tiquete || '';
-        document.getElementById('cantidad').value = item.cantidad || 1;
-        document.getElementById('moneda').value = item.moneda || 'USD';
-        document.getElementById('precioUnitario').value = item.precioUnitario || '';
-        document.getElementById('observacionesAdicionales').value = item.observacionesAdicionales || '';
-
-        document.getElementById('formTitle').textContent = `Editando Aval #${item.id}`;
-        document.getElementById('btnGuardar').textContent = 'Actualizar';
-        document.getElementById('btnCancelarEdit').classList.remove('d-none');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function limpiarFormulario() {
-        document.getElementById('avalId').value = '';
-        document.getElementById('avalForm').reset();
-        document.getElementById('formTitle').textContent = 'Registrar Nuevo Aval';
-        document.getElementById('btnGuardar').textContent = 'Guardar';
-        document.getElementById('btnCancelarEdit').classList.add('d-none');
-    }
 
     async function eliminarAval(id) {
         if (confirm('¿Desea eliminar este aval?')) {
