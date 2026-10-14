@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Control de Avales</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos Personalizados -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container my-5">
+    <h2 class="main-title text-center">Control de Avales de Software</h2>
+
+    <!-- Formulario de Registro / Edición -->
+    <div class="card mb-4">
+        <div class="card-header header-primary">
+            <h5 id="formTitle">Registrar Nuevo Aval</h5>
+            <button class="btn btn-sm btn-light d-none" id="btnCancelarEdit" onclick="limpiarFormulario()">Cancelar Edición</button>
+        </div>
+        <div class="card-body">
+            <form id="avalForm" class="row g-3">
+                <input type="hidden" id="avalId">
+
+                <div class="col-md-3">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" class="form-control" id="fecha" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Software</label>
+                    <select class="form-select" id="nombreSoftware" required>
+                        <option value="">Seleccione...</option>
+                        <option value="IntelliJ IDEA">IntelliJ IDEA</option>
+                        <option value="Oracle DB">Oracle DB</option>
+                        <option value="Microsoft Visual Studio">Microsoft Visual Studio</option>
+                        <option value="Docker Desktop">Docker Desktop</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Versión</label>
+                    <input type="text" class="form-control" id="version" placeholder="Ej. 2026.1">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Idioma</label>
+                    <select class="form-select" id="idioma">
+                        <option value="Español">Español</option>
+                        <option value="Inglés">Inglés</option>
+                        <option value="Multilenguaje">Multilenguaje</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Instancia Solicitante</label>
+                    <select class="form-select" id="instanciaSolicitante">
+                        <option value="Departamento de TI">Departamento de TI</option>
+                        <option value="Dirección General">Dirección General</option>
+                        <option value="Gestión Académica">Gestión Académica</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Oficio</label>
+                    <input type="text" class="form-control" id="oficio" placeholder="OF-2026-X">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tiquete</label>
+                    <input type="text" class="form-control" id="tiquete" placeholder="TK-000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Renovación</label>
+                    <select class="form-select" id="requiereRenovacion">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" min="1" value="1" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Moneda</label>
+                    <select class="form-select" id="moneda">
+                        <option value="USD">USD ($)</option>
+                        <option value="CRC">CRC (₡)</option>
+                        <option value="EUR">EUR (€)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Precio Unitario</label>
+                    <input type="number" step="0.01" class="form-control" id="precioUnitario" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Costo Total (Auto)</label>
+                    <input type="text" class="form-control" id="costoTotal" readonly placeholder="Calculado al guardar">
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Observaciones Adicionales</label>
+                    <textarea class="form-control" id="observacionesAdicionales" rows="2"></textarea>
+                </div>
+
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-success" id="btnGuardar">Guardar Aval</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Panel de Filtros Multicriterio -->
+    <div class="card mb-4">
+        <div class="card-header header-filter">
+            <h6 id="filterTitle">Filtros de Búsqueda Avanzada</h6>
+            <button class="btn btn-sm btn-outline-light" onclick="limpiarFiltros()">Limpiar Filtros</button>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Software</label>
+                    <select class="form-select form-select-sm" id="filterSoftware" onchange="filtrarTabla()">
+                        <option value="">Todos los softwares</option>
+                        <option value="IntelliJ IDEA">IntelliJ IDEA</option>
+                        <option value="Oracle DB">Oracle DB</option>
+                        <option value="Microsoft Visual Studio">Microsoft Visual Studio</option>
+                        <option value="Docker Desktop">Docker Desktop</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Instancia Solicitante</label>
+                    <select class="form-select form-select-sm" id="filterInstancia" onchange="filtrarTabla()">
+                        <option value="">Todas las instancias</option>
+                        <option value="Departamento de TI">Departamento de TI</option>
+                        <option value="Dirección General">Dirección General</option>
+                        <option value="Gestión Académica">Gestión Académica</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Año</label>
+                    <select class="form-select form-select-sm" id="filterAño" onchange="filtrarTabla()">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Fecha Específica</label>
+                    <input type="date" class="form-control form-control-sm" id="filterFecha" onchange="filtrarTabla()">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end justify-content-end">
+                    <span class="badge-total" id="totalRegistros">Registros: 0</span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Buscar por Oficio</label>
+                    <input type="text" class="form-control form-control-sm" id="filterOficio" placeholder="Ej. OF-2026-X" onkeyup="filtrarTabla()">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Buscar por Tiquete</label>
+                    <input type="text" class="form-control form-control-sm" id="filterTiquete" placeholder="Ej. TK-000" onkeyup="filtrarTabla()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Registros -->
+    <div class="card">
+        <div class="card-header header-dark">
+            <h5>Lista de Avales Registrados</h5>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Software</th>
+                    <th>Instancia</th>
+                    <th>Oficio</th>
+                    <th>Tiquete</th>
+                    <th>Cant.</th>
+                    <th>Precio U.</th>
+                    <th>Total</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="tablaAvales">
+                <!-- Registros dinámicos -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = '/api/avales';
+    let listaAvalesGlobal = [];
+
+    document.addEventListener('DOMContentLoaded', cargarAvales);
+
+    async function cargarAvales() {
+        const res = await fetch(API_URL);
+        listaAvalesGlobal = await res.json();
+        poblarAñosDisponibles();
+        filtrarTabla();
+    }
+
+    function poblarAñosDisponibles() {
+        const selectAño = document.getElementById('filterAño');
+        const añoActualVal = selectAño.value;
+        const años = new Set();
+
+        años.add("2025");
+        años.add("2026");
+
+        listaAvalesGlobal.forEach(item => {
+            if (item.fecha) {
+                const año = item.fecha.split('-')[0];
+                años.add(año);
+            }
+        });
+
+        selectAño.innerHTML = '<option value="">Todos</option>';
+        Array.from(años).sort((a, b) => b - a).forEach(año => {
+            selectAño.innerHTML += `<option value="${año}">${año}</option>`;
+        });
+
+        selectAño.value = añoActualVal;
+    }
+
+    function renderizarTabla(avales) {
+        const tbody = document.getElementById('tablaAvales');
+        tbody.innerHTML = '';
+        document.getElementById('totalRegistros').textContent = `Registros: ${avales.length}`;
+
+        avales.forEach(item => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.fecha || ''}</td>
+                    <td><strong>${item.nombreSoftware}</strong> ${item.version ? '(' + item.version + ')' : ''}</td>
+                    <td>${item.instanciaSolicitante || ''}</td>
+                    <td>${item.oficio || ''}</td>
+                    <td>${item.tiquete || ''}</td>
+                    <td>${item.cantidad || 0}</td>
+                    <td>${item.moneda} ${item.precioUnitario ? item.precioUnitario.toFixed(2) : '0.00'}</td>
+                    <td><strong>${item.moneda} ${item.costoTotal ? item.costoTotal.toFixed(2) : '0.00'}</strong></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-warning me-1" onclick="cargarEdicion(${item.id})">Editar</button>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarAval(${item.id})">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function filtrarTabla() {
+        const software = document.getElementById('filterSoftware').value.toLowerCase();
+        const instancia = document.getElementById('filterInstancia').value.toLowerCase();
+        const año = document.getElementById('filterAño').value;
+        const fechaExacta = document.getElementById('filterFecha').value;
+        const oficio = document.getElementById('filterOficio').value.toLowerCase();
+        const tiquete = document.getElementById('filterTiquete').value.toLowerCase();
+
+        const filtrados = listaAvalesGlobal.filter(item => {
+            const coincideSoftware = !software || (item.nombreSoftware && item.nombreSoftware.toLowerCase() === software);
+            const coincideInstancia = !instancia || (item.instanciaSolicitante && item.instanciaSolicitante.toLowerCase() === instancia);
+            const coincideOficio = !oficio || (item.oficio && item.oficio.toLowerCase().includes(oficio));
+            const coincideTiquete = !tiquete || (item.tiquete && item.tiquete.toLowerCase().includes(tiquete));
+
+            let coincideAño = true;
+            let coincideFecha = true;
+
+            if (item.fecha) {
+                if (año) coincideAño = item.fecha.startsWith(año);
+                if (fechaExacta) coincideFecha = item.fecha === fechaExacta;
+            } else {
+                if (año || fechaExacta) return false;
+            }
+
+            return coincideSoftware && coincideInstancia && coincideOficio && coincideTiquete && coincideAño && coincideFecha;
+        });
+
+        renderizarTabla(filtrados);
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('filterSoftware').value = '';
+        document.getElementById('filterInstancia').value = '';
+        document.getElementById('filterAño').value = '';
+        document.getElementById('filterFecha').value = '';
+        document.getElementById('filterOficio').value = '';
+        document.getElementById('filterTiquete').value = '';
+        filtrarTabla();
+    }
+
+    document.getElementById('avalForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('avalId').value;
+        const avalData = {
+            fecha: document.getElementById('fecha').value,
+            nombreSoftware: document.getElementById('nombreSoftware').value,
+            version: document.getElementById('version').value,
+            idioma: document.getElementById('idioma').value,
+            requiereRenovacion: document.getElementById('requiereRenovacion').value === 'true',
+            instanciaSolicitante: document.getElementById('instanciaSolicitante').value,
+            oficio: document.getElementById('oficio').value,
+            tiquete: document.getElementById('tiquete').value,
+            cantidad: parseInt(document.getElementById('cantidad').value),
+            moneda: document.getElementById('moneda').value,
+            precioUnitario: parseFloat(document.getElementById('precioUnitario').value),
+            observacionesAdicionales: document.getElementById('observacionesAdicionales').value
+        };
+
+        if (id) {
+            await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(avalData)
+            });
+        } else {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(avalData)
+            });
+        }
+
+        limpiarFormulario();
+        cargarAvales();
+    });
+
+    function cargarEdicion(id) {
+        const item = listaAvalesGlobal.find(a => a.id === id);
+        if (!item) return;
+
+        document.getElementById('avalId').value = item.id;
+        document.getElementById('fecha').value = item.fecha || '';
+        document.getElementById('nombreSoftware').value = item.nombreSoftware || '';
+        document.getElementById('version').value = item.version || '';
+        document.getElementById('idioma').value = item.idioma || 'Español';
+        document.getElementById('requiereRenovacion').value = item.requiereRenovacion ? 'true' : 'false';
+        document.getElementById('instanciaSolicitante').value = item.instanciaSolicitante || 'Departamento de TI';
+        document.getElementById('oficio').value = item.oficio || '';
+        document.getElementById('tiquete').value = item.tiquete || '';
+        document.getElementById('cantidad').value = item.cantidad || 1;
+        document.getElementById('moneda').value = item.moneda || 'USD';
+        document.getElementById('precioUnitario').value = item.precioUnitario || '';
+        document.getElementById('observacionesAdicionales').value = item.observacionesAdicionales || '';
+
+        document.getElementById('formTitle').textContent = `Editando Aval #${item.id}`;
+        document.getElementById('btnGuardar').textContent = 'Actualizar';
+        document.getElementById('btnCancelarEdit').classList.remove('d-none');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function limpiarFormulario() {
+        document.getElementById('avalId').value = '';
+        document.getElementById('avalForm').reset();
+        document.getElementById('formTitle').textContent = 'Registrar Nuevo Aval';
+        document.getElementById('btnGuardar').textContent = 'Guardar';
+        document.getElementById('btnCancelarEdit').classList.add('d-none');
+    }
+
+    async function eliminarAval(id) {
+        if (confirm('¿Desea eliminar este aval?')) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            cargarAvales();
+        }
+    }
+</script>
+</body>
+</html>
